@@ -1,25 +1,44 @@
 const express=require('express')
 const app=express();
 const mongoose=require('mongoose')
-// const MongoClient = require('mongodb').MongoClient;
+const bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
+const {User}=require('./models/user')
 
-const uri ='mongodb+srv://shruti:abc@123@blog-app-uyjq4.mongodb.net/test?retryWrites=true&w=majority'
-mongoose.connect(uri,{useNewUrlParser: true, useUnifiedTopology: true }).then(()=>console.log("Db connected"))
+const config=require('./config/key')
+
+
+mongoose.connect(config.mongoURI,{useNewUrlParser: true, useUnifiedTopology: true }).then(()=>console.log("Db connected"))
                                             .catch((err)=>console.error("hello",err))
-
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
-// client.connect(err => {
-//     // const collection = client.db("test").collection("devices");
-//     // perform actions on the collection object
-//     console.log("connectced")
-//     client.close();
-// });
 
 app.get('/',(req,res) =>{
     res.send("hello world");
 })
 
+app.use(
+    bodyParser.urlencoded({
+      extended: false
+    })
+);
+app.use(bodyParser.json());
+app.use(cookieParser())
 
+app.post('/api/users/register',(req,res)=>{
+    const user=new User(req.body);
+    user.save((err,userData)=>{
+        if(err)
+        {
+            return res.json({sucess:false,err})
+        }
+        else{
+            return res.status(200).json(
+                {
+                    sucess:true
+                })
+        }
+    })
+
+})
 app.listen(5000,()=>{
     console.log("server is up and running on port 5000");
 })
