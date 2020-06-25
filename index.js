@@ -25,6 +25,7 @@ app.use(cookieParser())
 
 app.post('/api/users/register',(req,res)=>{
     const user=new User(req.body);
+    //user.pre('save', function)//it means before saving the data in databse run the fuction in 2nd parameter
     user.save((err,userData)=>{
         if(err)
         {
