@@ -29,22 +29,25 @@ const userSchema=mongoose.Schema({
     }
 })
 
-userSchema.pre('save',(next)=>{//next is next of middle ware functions
+userSchema.pre('save',function(next){//next is next of middle ware functions
     var user=this;//this is userSchema used to call pre function just line above
 
     if(user.isModified('password')){
 
         bcrypt.genSalt(saltRounds, function(err, salt) {
             if(err) return next(err);
-
+            else{
             bcrypt.hash(user.password,salt, (err,hash)=>{
                 if(err) return next(err);
-
-                user.password=hash
+                else{
+                user.password=hash;
+                next ();
+                }
             })
+        }
         })
     }else{
-        next();
+        next ();
     }
 })
 
