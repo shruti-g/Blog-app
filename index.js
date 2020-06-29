@@ -40,6 +40,51 @@ app.post('/api/users/register',(req,res)=>{
     })
 
 })
+
+app.post('/api/users/login',(req,res)=>{
+    //matching user email or finding the user
+    //how data entered by us as input for login is stored in this User variable with which we are calling the find one function
+    User.findOne({email:req.body.email},(err,user)=>{
+        if(!user){
+            return res.json({
+                loginSuccess:false,
+                err:err,
+                message:"email not found"
+            })
+        }
+
+
+        //comparing the password //else part
+        //data entered by the person is stored in user by call back function above 
+        user.comparePassword(req.body.password,(err,isMatch)=>{
+            if(!isMatch)
+            {
+                return res.json({
+                    loginSucess:false,
+                    message:"password not matched",
+                    err:err
+                })
+            }
+
+            //generating Token
+            user.generateToken((err,user)=>{
+                if(err)
+                return res.status(400).json({
+                    message:"token not created",
+                    err
+                })
+                else
+                res.cookie("user_auth",user.token)
+                    .status(200)
+                    .json({
+                        loginSucess:true,
+                        message:"token generated"
+                    })
+            })
+        })
+    })
+
+})
 app.listen(5000,()=>{
     console.log("server is up and running on port 5000");
 })
