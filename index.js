@@ -4,7 +4,7 @@ const mongoose=require('mongoose')
 const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 const {User}=require('./models/user')
-
+const {auth}=require('./middleware/auth')
 const config=require('./config/key')
 
 
@@ -22,6 +22,18 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(cookieParser())
+
+//middle ware only the loged in user can acess to some particular data 
+app.get('/api/users/auth', auth, (req,res)=>{
+
+    res.status(200).json({
+        _id:req._id,
+        auth:true,
+        email:req.user.email,
+        name:req.user.name,
+        lastname:req.user.lastname
+    })
+})
 
 app.post('/api/users/register',(req,res)=>{
     const user=new User(req.body);
