@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 const {User}=require('./models/user')
 const {auth}=require('./middleware/auth')
-const config=require('./server/config/key')
+const config=require('./config/key')
 
 
 mongoose.connect(config.mongoURI,{useNewUrlParser: true, useUnifiedTopology: true }).then(()=>console.log("Db connected"))
